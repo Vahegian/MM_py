@@ -1,7 +1,7 @@
 from binance.client import Client
 
 class BinanceCom:
-    def init(self):
+    def __init__(self):
         pass
 
     def connectToAccount(self, apiKey, apiSecret):
