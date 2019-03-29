@@ -1,0 +1,1 @@
+pairsFile = '/home/lavaguiny/projects/Python/MM/raw/pairs.csv'
