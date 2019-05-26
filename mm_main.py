@@ -6,18 +6,19 @@
 from subprocess import call
 from binanceAPI.binanceCom import BinanceCom
 from IO.fileIO import FileIO
-# from communicator.organiser import Organiser
+# from communicator.organiser import Organiser  
 import time
 import threading
+import sys
+import eel
 
-
-def startServer():
-    sr = call("python3 ./MMDJGO/manage.py runserver", shell=True)
+#def startServer():
+    #sr = call("python3 ./MMDJGO/manage.py runserver", shell=True)
 
 if __name__ == "__main__":
-    stThread = threading.Thread(target=startServer)
-    stThread.deamon = True
-    stThread.start()
+    #stThread = threading.Thread(target=startServer)
+    #stThread.deamon = True
+    #stThread.start()
   
     fio = FileIO()
     bc = BinanceCom()
@@ -25,7 +26,7 @@ if __name__ == "__main__":
     #oser = Organiser(fio, bc, wg)
     #wg.startGTK()
     
-    time.sleep(2)
-    browser = call("./MMDJGO/openChromeApp.sh", shell=True)
-
-
+    #time.sleep(2)
+    #browser = call("./MMDJGO/openChromeApp.sh", shell=True)
+    eel.init('UI')
+    eel.start('login/index.html')
