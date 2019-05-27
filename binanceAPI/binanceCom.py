@@ -1,5 +1,6 @@
 from binance.client import Client
 
+
 class BinanceCom:
     def __init__(self):
         pass

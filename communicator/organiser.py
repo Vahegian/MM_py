@@ -4,6 +4,8 @@ import constants.uiConsts as uiConst
 import time
 import threading
 from uiControl.topBox import TopBox
+from uiControl.tradeHelper import TradeHelper
+
 
 class Organiser:
     def __init__(self, fio, bc, wg):
@@ -11,32 +13,67 @@ class Organiser:
         self.fio = fio
         self.bc = bc
         self.wg = wg
+
+        self.tb = None
+        self.th = None
+
         self.def_client = bc.connectToAccount(bConst.defaulKey, bConst.defaultSecret)
 
-        pairDict = self.makePairPriceDictFromFile(fconst.pairsFile, self.def_client)
+        self.pairDict = self.makePairPriceDictFromFile(fconst.pairsFile, self.def_client)
 
         self.curPriceDict = {}
 
-        wg.showWindow(self.setupTheUI(pairDict))
+        wg.showWindow(self.setupTheUI(self.pairDict))
+
+        # wg.startGTK()
 
 
 
     def setupTheUI(self, pairDict):
         file = self.wg.openUIFile(fconst.uiFile)
         window = self.wg.getObject(file, uiConst.mainWindow)
+        window.set_default_size(640, 640)
 
         self.wg.setupSpinner(file, uiConst.spinner)
         self.wg.setupProgressBar(file, uiConst.pBar)
 
-        tb = TopBox(self)
-        tb.setupTopBox(file, pairDict)
-        cutPriceThread = threading.Thread(target=tb.updateCurPrice)
+        self.tb = TopBox(self)
+        self.tb.setupTopBox(file, pairDict)
+
+        self.th = TradeHelper(self)
+        self.th.setupTradeHelper(file, pairDict)
+
+        # self.updateUI()
+        cutPriceThread = threading.Thread(target=self.updateUI)
         cutPriceThread.daemon = True
         cutPriceThread.start()
 
 
 
         return window
+
+    def updateUI(self):
+        step = 1.0/5.0
+        self.wg.setpBarProgress(step)
+        while not self.stopThreads:
+
+            self.wg.spinnerStart(uiConst.updateing)
+
+            pairDict = self.getPairPriceDict(self.pairDict)
+            self.wg.pBarPulse()
+
+            self.tb.updateCurPrice(pairDict)
+            self.wg.pBarPulse()
+
+            self.th.updateTradeData(pairDict)
+            self.wg.pBarPulse()
+
+            self.wg.spinnerStop()
+
+            # self.wg.setpBarProgress(0.0)
+            time.sleep(0.3)
+
+
 
     # def updateCurPrice(self):
     #     while not self.stopThreads:
@@ -88,7 +125,6 @@ class Organiser:
             for pair in listOfPairs:
                 pairDict.update({pair: self.bc.getCoinInfo(self.def_client, pair)['lastPrice']})
             return pairDict
-
 
         
     

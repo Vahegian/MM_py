@@ -15,18 +15,14 @@ import eel
 #def startServer():
     #sr = call("python3 ./MMDJGO/manage.py runserver", shell=True)
 
+@eel.expose
+def loginUser(login, password):
+    print (login," : ",password)
+
 if __name__ == "__main__":
-    #stThread = threading.Thread(target=startServer)
-    #stThread.deamon = True
-    #stThread.start()
   
     fio = FileIO()
     bc = BinanceCom()
-    #wg = WindowGer()
-    #oser = Organiser(fio, bc, wg)
-    #wg.startGTK()
-    
-    #time.sleep(2)
-    #browser = call("./MMDJGO/openChromeApp.sh", shell=True)
+
     eel.init('UI')
     eel.start('login/index.html')
