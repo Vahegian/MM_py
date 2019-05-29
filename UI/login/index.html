@@ -83,9 +83,21 @@
 	<script src="../global/js/window.js"></script>
 
 	<script>
-		$('.login100-form-btn').on('click', function(){
-			eel.loginUser( document.getElementById("uName").value, document.getElementById("uPass").value);
+		$('.login100-form-btn').on('click', async function(){
+			let is_logged = await eel.loginUser( document.getElementById("uName").value, document.getElementById("uPass").value)();
+			console.log(is_logged);
+			if(is_logged){
+				lunch_main();
+			}
 		});
+	</script>
+
+	<script>
+		// eel.expose(lunch_main);
+		function lunch_main(){
+			window.location.replace("../main/index.html");
+			console.log("lunching");
+		}
 	</script>
 
 	<script>
