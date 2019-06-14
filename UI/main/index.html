@@ -13,7 +13,18 @@
   </head>
 
   <body>
-    <h1 id="mm1" >MM</h1>
+      <!-- Navbar begin -->
+      <div id="nav-placeholder">
+        </div>
+      <!-- Navbar end -->
+
+      <!-- binance begin -->
+      <div id="binance-placeholder">
+        </div>
+      <!-- binance end -->
+
+
+    
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -21,48 +32,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     
+    <!-- put navbar in placeholder -->
+    <script src="//code.jquery.com/jquery.min.js"></script>
     <script>
-        const url = '/io/gbp';
-        async function fetchAsync () {
-            try{
-                let response = await fetch(url);
-                let data = await response.json();
-                // document.getElementById("mm1").innerHTML = data.XRPUSDT;
-                showdata(data);
-            }catch(Exception){
-                alert(Exception);
-                clearInterval(btime);}
+        $.get("navbar.html", function(data){
+            $("#nav-placeholder").replaceWith(data);
+        });
+    </script>
+
+    <script>
+        function showBinance(){
+            $.get("binance.html", function(data){
+                $("#binance-placeholder").replaceWith(data);
+            });
         }
     </script>
 
     <script>
-        function showdata(data) {
-            // var bdata = JSON.parse(data);
-            // console.log(data);
-            for (var key in data){
-                // console.log(key);
-                if(document.getElementById(key)){
-                    document.getElementById(key).innerHTML = key +" : "+ data[key];
-                }else{
-                    var h = document.createElement("H3");
-                    h.setAttribute('id', key)
-                    var t = document.createTextNode(key +" : "+ data[key]);
-                    h.appendChild(t);
-                    document.body.appendChild(h);
-                }
+        function clearBody(){
+            var div = document.getElementById('binance');
+            while(div.firstChild){
+                div.removeChild(div.firstChild);
             }
-            // for (i = 0; i < data.size; i++){
-            //     var h = document.createElement("H1");
-            //     var t = document.createTextNode(data.keys()[i]);
-            //     h.appendChild(t);
-            //     document.body.appendChild(h);
-            //     console.log(i);
-            // }
         }
     </script>
 
-    <script>
-         const btime = setInterval(fetchAsync, 1000);
-    </script>
 </body>
 </html>

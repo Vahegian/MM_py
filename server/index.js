@@ -39,12 +39,20 @@ server.get(apiLink+'/gbA_B', (req, resp)=>{
     }
 });
 
-server.get(apiLink+'/Dept', (req, resp)=>{
+server.get(apiLink+'/gbDept', (req, resp)=>{
     var data = binance.getdeptMap();
     if (data!=null){
         resp.json(data);
         // console.log(bPrices.XRPUSDT);
     }
+});
+
+server.get(apiLink+'/gbPairs', (req, resp)=>{
+    resp.json(userData.binance[0].pairs);
+});
+
+server.get(apiLink+'/androidApp', (req, resp)=>{
+    resp.download("./server/Android/apk/mm.apk")
 });
 
 
