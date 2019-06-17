@@ -17,7 +17,7 @@
                                 <button id=navButtBinance type="button" class="btn btn-secondary">Binance</button>
                                 <button id=navButtCoinbase type="button" class="btn btn-secondary">Coinbase</button>
                                 <button id=navButtBitmex type="button" class="btn btn-secondary">Bitmex</button>
-                            </div>  
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -25,38 +25,39 @@
         </div>
     </div>
     <nav class="navbar navbar-dark bg-dark">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent"
+            aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
     </nav>
-    
+
     <script>
-        document.getElementById("navButtAll").addEventListener("click", function(){
+        document.getElementById("navButtAll").addEventListener("click", function () {
             // alert("All");
             clearBody();
         });
     </script>
 
     <script>
-        document.getElementById("navButtBinance").addEventListener("click", function(){
+        document.getElementById("navButtBinance").addEventListener("click", function () {
             // alert("Binance");
             showBinance();
         });
     </script>
 
     <script>
-        document.getElementById("navButtCoinbase").addEventListener("click", function(){
+        document.getElementById("navButtCoinbase").addEventListener("click", function () {
             alert("Coinbase");
         });
     </script>
     <script>
-            document.getElementById("navButtBitmex").addEventListener("click", function(){
-                alert("Bitmex");
-            });
+        document.getElementById("navButtBitmex").addEventListener("click", function () {
+            alert("Bitmex");
+        });
     </script>
     <script>
-            document.getElementById("navGetApp").addEventListener("click", async function(){
-                window.open('/io/androidApp', '_self');
-            });
+        document.getElementById("navGetApp").addEventListener("click", async function () {
+            window.open('/io/androidApp', '_self');
+        });
     </script>
 </div>

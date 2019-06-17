@@ -35,7 +35,7 @@
             var selectObj = document.getElementById(selectID);
             let pairs = await fetch('/io/gbPairs');
             let pairsArray = await pairs.json();
-            console.log(pairsArray);
+            // console.log(pairsArray);
             for (var pairnum in pairsArray) {
                 var x = document.createElement("option");
                 // x.setAttribute("value", "volvocar");

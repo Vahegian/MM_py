@@ -10,49 +10,4 @@
             $("#temp-pairInfo").replaceWith(data);
         });
     </script>
-
-    <h1 id="mm1">MM-MM</h1>
-    <script>
-        const url = '/io/gbp';
-
-        // console.log(response.json());
-        async function fetchAsync() {
-            try {
-                // let p = await fetch('/io/gbPairs');
-                let response = await fetch(url);
-                let data = await response.json();
-                // document.getElementById("mm1").innerHTML = data.XRPUSDT;
-                showdata(data);
-                // let pd = await p.json();
-                // console.log(pd[0])
-            } catch (Exception) {
-                alert(Exception);
-                clearInterval(btime);
-            }
-        }
-    </script>
-
-    <script>
-        function showdata(data) {
-            // var bdata = JSON.parse(data);
-            // console.log(data);
-            for (var key in data) {
-                // console.log(key);
-                if (document.getElementById(key)) {
-                    document.getElementById(key).innerHTML = key + " : " + data[key];
-                } else {
-                    var h = document.createElement("H3");
-                    h.setAttribute('id', key)
-                    var t = document.createTextNode(key + " : " + data[key]);
-                    h.appendChild(t);
-                    document.body.appendChild(h);
-                }
-            }
-        }
-    </script>
-
-    <script>
-        const btime = setInterval(fetchAsync, 1000);
-    </script>
-
 </div>

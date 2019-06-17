@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
 
     <title>MM Main View</title>
     <!-- Required meta tags -->
@@ -8,54 +9,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-  </head>
+</head>
 
-  <body>
-      <!-- Navbar begin -->
-      <div id="nav-placeholder">
-        </div>
-      <!-- Navbar end -->
+<body>
+    <!-- Navbar begin -->
+    <div id="nav-placeholder">
+    </div>
+    <!-- Navbar end -->
 
-      <!-- binance begin -->
-      <div id="binance-placeholder">
-        </div>
-      <!-- binance end -->
-
-
-    
-
+    <!-- binance begin -->
+    <div id="body-placeholder">
+    </div>
+    <!-- binance end -->
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
     <!-- put navbar in placeholder -->
     <script src="//code.jquery.com/jquery.min.js"></script>
     <script>
-        $.get("navbar.html", function(data){
+        $.get("navbar.html", function (data) {
             $("#nav-placeholder").replaceWith(data);
         });
     </script>
 
     <script>
-        function showBinance(){
-            $.get("binance.html", function(data){
-                $("#binance-placeholder").replaceWith(data);
+        function showBinance() {
+            $.get("binance.html", function (data) {
+                // var body = document.getElementById("body-placeholder");
+                $("#body-placeholder").append(data);
             });
         }
     </script>
 
     <script>
-        function clearBody(){
-            var div = document.getElementById('binance');
-            while(div.firstChild){
-                div.removeChild(div.firstChild);
-            }
+        function clearBody() {
+            var div = document.getElementById("body-placeholder");
+            div.innerHTML = '';
+            // while (div.firstChild) {
+            //     div.removeChild(div.firstChild);
+            // }
+        }
+    </script>
+
+    <script>
+        function makeButton(text) {
+            var button = document.createElement("button");
+            button.setAttribute("type", "button");
+            button.setAttribute("class", "btn btn-secondary");
+            button.appendChild(document.createTextNode(text));
+            return button;
+
         }
     </script>
 
 </body>
+
 </html>

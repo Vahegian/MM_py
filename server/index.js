@@ -5,76 +5,70 @@ const server = exp();
 const binance = require('./binance/binanceControl');
 
 // setup binance
-binance.setUpAPI(userData.binance[0].apiKey, userData.binance[0].secret);
+binance.setUpAPI(userData.binance.default.apiKey, userData.binance.default.secret);
 
 const apiLink = '/io';
 
-server.listen(9823, ()=>console.log("server running"))
+server.listen(9823, () => console.log("server running"))
 server.use(exp.static('UI'))
-server.use(exp.json({limit: '1mb'}));
+server.use(exp.json({ limit: '1mb' }));
 
-
+binance.getUserPairInfo(userData);
 
 // binance.updateAsk_Bid('XRPUSDT');
 // binance.update_dept('XRPUSDT');
 
 
-server.post(apiLink, (request, response)=>{
-    console.log('got request'+request.body)
+server.post(apiLink, (request, response) => {
+    console.log('got request' + request.body)
 });
 
-server.get(apiLink+'/gbp', (req, resp)=>{
+server.get(apiLink + '/gbp', (req, resp) => {
     bPrices = binance.getPrices();
-    if (bPrices!=null){
+    if (bPrices != null) {
         resp.json(bPrices);
         // console.log(bPrices.XRPUSDT);
     }
+
 });
 
-server.get(apiLink+'/gbA_B', (req, resp)=>{
-    var data = binance.getaskbidMap();
-    if (data!=null){
+server.get(apiLink + '/gbA_B', (req, resp) => {
+    // binance.updateBinanceAskBidPerPair(userData);
+    var data = binance.getaskbidMap(userData);
+    if (data != null) {
         resp.json(data);
         // console.log(bPrices.XRPUSDT);
     }
 });
 
-server.get(apiLink+'/gbDept', (req, resp)=>{
-    var data = binance.getdeptMap();
-    if (data!=null){
+server.get(apiLink + '/gbDept', (req, resp) => {
+    // binance.updateBinanceDeptPerPair(userData);
+    var data = binance.getdeptMap(userData);
+    if (data != null) {
         resp.json(data);
         // console.log(bPrices.XRPUSDT);
     }
 });
 
-server.get(apiLink+'/gbPairs', (req, resp)=>{
-    resp.json(userData.binance[0].pairs);
+server.get(apiLink + '/gbPairs', (req, resp) => {
+    resp.json(userData.binance.default.pairs);
 });
 
-server.get(apiLink+'/androidApp', (req, resp)=>{
+server.get(apiLink + '/gbBPairs', (req, resp) => {
+    resp.json(userData.binance.default.boughtPairs);
+});
+
+server.get(apiLink + '/androidApp', (req, resp) => {
     resp.download("./server/Android/apk/mm.apk")
 });
 
-
-function updateBinanceAskBidPerPair(){
-    var pairs = userData.binance[0].pairs;
-    for (var pairNum in pairs){
-        // console.log(pair);
-        binance.updateAsk_Bid(pairs[pairNum]);
+server.get(apiLink + '/gbUserPairInfo', async (req, resp) => {
+    var info = await binance.getUserPairInfo(userData);
+    // console.log(info);
+    if (info != null) {
+        resp.json(Array.from(info));
     }
-    // console.log(binance.getaskbidMap());
-}
-
-function updateBinanceDeptPerPair(){
-    var pairs = userData.binance[0].pairs;
-    for (var pairNum in pairs){
-        // console.log(pair);
-        binance.update_dept(pairs[pairNum]);
-    }
-    // console.log(binance.getdeptMap());
-}
+});
 
 // update binance
-const bUpdate = setInterval(binance.updateBPrices, 1000);
-const bAskBidUpdate = setInterval(updateBinanceAskBidPerPair, 1000);
-const bDeptUpdate = setInterval(updateBinanceDeptPerPair, 1000);
+// const bUpdate = setInterval(binance.updateBPrices, 1000);
