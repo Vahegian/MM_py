@@ -6,6 +6,7 @@ const binanceAPI = require('./binanceAPI');
 var askbidMap = new Map();
 var bPrices = null;
 var pairDeptMap = new Map();
+var pairInfoLastID = null;
 
 async function requirebPrice(tickers) {
     bPrices = tickers;
@@ -80,7 +81,7 @@ module.exports = {
         var totalProfit = 0.0;
         try {
             for (var id in bPairs) {
-
+                pairInfoLastID = id;
                 // for(var list in bPairs[id]){
 
                 // }
@@ -92,7 +93,9 @@ module.exports = {
                 var pairFee = parseFloat(bPairs[id][3]);
 
                 // converting all pairs to USDT
-                pairCurPrice = pairCurPrice * parseFloat(bPrices[bPairs[id][0].substr(-3) + "USDT"]);
+                if(bPairs[id][0].substr(-4) != "USDT"){
+                    pairCurPrice = pairCurPrice * parseFloat(bPrices[bPairs[id][0].substr(-3) + "USDT"]);
+                }
                 var totalBought = (pairBPrice * pairAmount);
                 var total = (pairCurPrice * pairAmount) - totalBought;
                 var feeAmount = (pairFee / 100) * total;
@@ -121,5 +124,27 @@ module.exports = {
             console.log(Exception);
             return null;
         }
+    },
+
+    getLastPairInfoID: function(){
+        return pairInfoLastID;
+    },
+
+    addToPairInfo: function(pairInfo, userData){
+        try{
+            var pair = pairInfo[0];
+            var amount = parseFloat(pairInfo[1]);
+            var price = parseFloat(pairInfo[2]);
+            var fee = parseFloat(pairInfo[3]);
+            var id = parseFloat(pairInfoLastID)+1;
+
+            userData.binance.default.boughtPairs[id] = [pair, amount, price, fee];
+            return userData;
+        }catch(Exception){
+            // response.json("Failed: Incorrect data");
+            console.log("failed : "+ Exception);
+        }
     }
+
+
 }

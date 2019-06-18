@@ -55,11 +55,14 @@
 
     <script>
         function clearBody() {
+            try{
+            stopBinance();
             var div = document.getElementById("body-placeholder");
             div.innerHTML = '';
             // while (div.firstChild) {
             //     div.removeChild(div.firstChild);
             // }
+            }catch(Exception){}
         }
     </script>
 

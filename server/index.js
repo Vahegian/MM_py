@@ -1,5 +1,6 @@
 const fs = require('fs');
-let userData = JSON.parse(fs.readFileSync('././privateConsts.json', 'utf-8'));
+const userFile = '././privateConsts.json';
+let userData = JSON.parse(fs.readFileSync(userFile, 'utf-8'));
 const exp = require('express');
 const server = exp();
 const binance = require('./binance/binanceControl');
@@ -13,14 +14,34 @@ server.listen(9823, () => console.log("server running"))
 server.use(exp.static('UI'))
 server.use(exp.json({ limit: '1mb' }));
 
-binance.getUserPairInfo(userData);
+/*      Biannce start       */
 
-// binance.updateAsk_Bid('XRPUSDT');
-// binance.update_dept('XRPUSDT');
+// binance.getUserPairInfo(userData);
 
+server.post(apiLink+'/addbPairInfo', (request, response) => {
+    var pairInfo = request.body;
+    var newUserData = binance.addToPairInfo(pairInfo, userData);
+    try{
+        fs.writeFileSync(userFile, JSON.stringify(newUserData),'utf-8');
+        response.json("Successfully Added");
+    }catch(Exception){
+        response.json("Failed: Incorrect data");
+    }
+    // console.log('got request : ' + );
+});
 
-server.post(apiLink, (request, response) => {
-    console.log('got request' + request.body)
+server.post(apiLink+'/rmbPairInfo', (request, response) => {
+    var id = request.body;
+    try{
+        delete userData.binance.default.boughtPairs[id];
+        fs.writeFileSync(userFile, JSON.stringify(userData),'utf-8');
+        response.json("Removed");
+    //    console.log(id[0]); 
+    }catch(Exception){
+        response.json("Failed: not removed");
+        console.log("failed : "+ Exception);
+    }
+    // console.log('got request : ' + );
 });
 
 server.get(apiLink + '/gbp', (req, resp) => {
@@ -70,5 +91,4 @@ server.get(apiLink + '/gbUserPairInfo', async (req, resp) => {
     }
 });
 
-// update binance
-// const bUpdate = setInterval(binance.updateBPrices, 1000);
+/*      Biannce end       */

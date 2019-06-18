@@ -5,6 +5,8 @@
         overflow: auto;
     }
 
+    .my-custom-scrollbar thead th { position: sticky; top: 0; }
+
     .table-wrapper-scroll-y {
         display: block;
     }
@@ -15,12 +17,6 @@
         <table class="table table-bordered table-striped mb-0">
             <thead class="thead-dark">
                 <tr id="bPairsTableHead">
-                    <th scope="col">Pair</th>
-                    <!-- <th scope="col">Amount</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Fee</th> -->
-                    <th scope="col">Profit</th>
-                    <th scope="col"></th>
                 </tr>
             </thead>
             <br>
@@ -31,7 +27,10 @@
         </table>
     </div>
     <br>
+    <button id="showAllInfobut" type="button" class="btn btn-secondary">Show All</button>
+    
     <div>
+            <br>
         <table class="table table-bordered table-striped mb-0">
             <thead class="thead-dark">
                 <tr>
@@ -47,10 +46,12 @@
             </tbody>
         </table>
     </div>
+    
 
     <script>
         let data = null;
         var pairInfo = [];
+        var showAll = false;
 
         function setID(item, id) {
             item.setAttribute("id", id);
@@ -79,7 +80,7 @@
             }
         }
 
-        function makeTableHead(all = false) {
+        function makeTableHead(all) {
             var col = document.getElementById("bPairsTableHead");
             col.innerHTML = '';
 
@@ -105,7 +106,8 @@
             }
         }
 
-        function makePairInfoRow(pairInfo, profit, all = false) {
+        function makePairInfoRow(id, pairInfo, profit, all = false) {
+            makeTableHead(all);
             var row = document.createElement("tr");
             // setID(row, id);
             row.appendChild(makeRowItem(pairInfo[0]));
@@ -113,7 +115,7 @@
                 row.appendChild(makeRowItem(pairInfo[1]));
                 row.appendChild(makeRowItem(pairInfo[2]));
                 row.appendChild(makeRowItem(pairInfo[3]));
-                makeTableHead(all);
+                
             }
 
             profit = parseFloat(profit).toFixed(4);
@@ -126,9 +128,17 @@
             row.appendChild(item);
             var button = makeButton("Remove");
             row.appendChild(button);
-            button.addEventListener("click", function (id) {
-                // remove code here
-                // updateProfit(id);
+            button.addEventListener("click", async function () {
+                console.log(id);
+                var rmoptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify([id])
+            };
+            var data = await(await fetch('/io/rmbPairInfo', rmoptions)).json();
+            alert(data);
             });
             // console.log(row.childNodes.length);
             return row;
@@ -141,7 +151,7 @@
             tableObj.innerHTML = '';
             for (var id in data) {
                 if (data[id][0] != "totalInvested" && data[id][0] != "totalProfit") {
-                    var row = makePairInfoRow(data[id][0], data[id][1], false);
+                    var row = makePairInfoRow(id, data[id][0], data[id][1], showAll);
                     tableObj.appendChild(row);
                 } else {
                     updateTotals(data[id]);
@@ -163,6 +173,15 @@
         // const btime = setInterval(getBPrices, 1000);
 
         // populatePairTable();
+        function stopBinance(){
+            clearInterval(pairInfoUpdate);
+        }
+
+        $("#showAllInfobut").click( function () {
+                showAll = !showAll;
+                // remove code here
+                // updateProfit(id);
+            });
 
         const pairInfoUpdate = setInterval(populatePairTable, 1000);
     </script>
