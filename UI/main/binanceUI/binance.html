@@ -1,0 +1,19 @@
+<div id="binance">
+    <div id="temp-top"></div>
+    <div id="temp-pairInfo"></div>
+    <div id="temp-bottom"></div>
+
+    <script>
+        $.get("binanceUI/binanceTop.html", function (data) {
+            $("#temp-top").replaceWith(data);
+        });
+        $.get("binanceUI/binancePairInfo.html", function (data) {
+            $("#temp-pairInfo").replaceWith(data);
+        });
+        $.get("binanceUI/binanceBottom.html", function (data) {
+            $("#temp-bottom").replaceWith(data);
+        });
+
+        
+    </script>
+</div>

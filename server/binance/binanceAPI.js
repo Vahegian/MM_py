@@ -48,5 +48,27 @@ module.exports = {
 
     marketSell: async function (pair, amount) {
         await binance.marketSell(pair, amount);
+    },
+
+    getTradeHistory: async function(pair, callback){
+        await binance.trades(pair, (error, trades, symbol) => {
+            return callback(symbol, trades);
+          });
+    },
+
+    getAllOpenOrders: async function(callback){
+        await binance.openOrders(false, (error, openOrders) => {
+            // console.log("openOrders()", openOrders);
+            return callback(openOrders);
+          });
+    },
+
+    getWalletInfo: async function(callback){
+        await binance.balance((error, balances) => {
+            if ( error ) return console.error(error);
+            callback(balances);
+            // console.log("balances()", balances);
+            // console.log("ETH balance: ", balances.ETH.available);
+          });
     }
 };

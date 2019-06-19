@@ -1,0 +1,125 @@
+<style>
+    .my-custom-scrollbar {
+        position: relative;
+        height: 300px;
+        overflow: auto;
+    }
+
+    .my-custom-scrollbar thead th {
+        position: sticky;
+        top: 0;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }
+</style>
+
+<div>
+    <div>
+        <br>
+        <h3>
+            <p class="text-center">Open Orders</p>
+        </h3>
+    </div>
+    <div class="table-wrapper-scroll-y my-custom-scrollbar">
+        <table class="table table-sm">
+            <thead class="thead-dark">
+                <tr id="bTradeTableHead">
+                    <th>
+                        Order
+                    </th>
+                    <th>
+                        Pair
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                </tr>
+            </thead>
+            <br>
+            <tbody id="bTradeTable">
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <br>
+        <h3>
+            <p class="text-center">Wallet</p>
+        </h3>
+    </div>
+
+    <div class="table-wrapper-scroll-y my-custom-scrollbar">
+        <table class="table table-sm">
+            <thead class="thead-dark">
+                <tr id="bWalletTableHead">
+                    <th>
+                        Pair
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                </tr>
+            </thead>
+            <br>
+            <tbody id="bWalletTable">
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <button id="bAutoTradeBut" type="button" class="btn btn-success btn-lg btn-block">
+        Auto Trade</button>
+
+</div>
+
+<script>
+    async function populateOrderTable(orderList) {
+        var tableObj = document.getElementById("bTradeTable");
+        tableObj.innerHTML = '';
+        for (var index in orderList) {
+            var row = document.createElement('tr');
+            var order = document.createElement('td');
+            var text = orderList[index]["side"];
+            order.innerHTML = text;
+            if (text == "SELL") { order.style.backgroundColor = "red"; }
+            else { order.style.backgroundColor = "green" }
+            var pair = document.createElement('td');;
+            pair.innerHTML = orderList[index]["symbol"];
+            var amount = document.createElement('td');;
+            amount.innerHTML = parseFloat(orderList[index]["origQty"]).toFixed(4);
+            var price = document.createElement('td');;
+            price.innerHTML = parseFloat(orderList[index]["price"]).toFixed(4);
+
+            row.appendChild(order);
+            row.appendChild(pair);
+            row.appendChild(amount);
+            row.appendChild(price);
+            tableObj.appendChild(row);
+        }
+    }
+
+    async function getUserOpenOrd(link) {
+        try {
+            // let response = ;
+            let listOfOrders = await (await fetch(link)).json();
+            return listOfOrders;
+        } catch (Exception) {
+            console.log(Exception);
+            // clearInterval(btime);
+        }
+    }
+
+    async function updateOrdersTable() {
+        var orderList = await getUserOpenOrd('/io/gbOpenOrd');
+        populateOrderTable(orderList);
+        var walletmap = await getUserOpenOrd('/io/gbWallet');
+        // console.log(walletmap);
+    }
+</script>

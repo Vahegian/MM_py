@@ -11,7 +11,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap2-toggle.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -35,6 +35,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap2-toggle.min.js"></script>
+
 
     <!-- put navbar in placeholder -->
     <script src="//code.jquery.com/jquery.min.js"></script>
@@ -46,7 +48,7 @@
 
     <script>
         function showBinance() {
-            $.get("binance.html", function (data) {
+            $.get("binanceUI/binance.html", function (data) {
                 // var body = document.getElementById("body-placeholder");
                 $("#body-placeholder").append(data);
             });
@@ -55,14 +57,14 @@
 
     <script>
         function clearBody() {
-            try{
-            stopBinance();
-            var div = document.getElementById("body-placeholder");
-            div.innerHTML = '';
-            // while (div.firstChild) {
-            //     div.removeChild(div.firstChild);
-            // }
-            }catch(Exception){}
+            try {
+                stopBinance();
+                var div = document.getElementById("body-placeholder");
+                div.innerHTML = '';
+                // while (div.firstChild) {
+                //     div.removeChild(div.firstChild);
+                // }
+            } catch (Exception) { }
         }
     </script>
 
