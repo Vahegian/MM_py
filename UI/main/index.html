@@ -47,7 +47,9 @@
     </script>
 
     <script>
-        function showBinance() {
+        async function showBinance() {
+            await fetch("/binance");
+
             $.get("binanceUI/binance.html", function (data) {
                 // var body = document.getElementById("body-placeholder");
                 $("#body-placeholder").append(data);
@@ -72,7 +74,7 @@
         function makeButton(text) {
             var button = document.createElement("button");
             button.setAttribute("type", "button");
-            button.setAttribute("class", "btn btn-secondary");
+            button.setAttribute("class", "btn btn-secondary waves-effect waves-light");
             button.appendChild(document.createTextNode(text));
             return button;
 

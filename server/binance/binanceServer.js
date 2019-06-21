@@ -8,7 +8,7 @@ function openServer(server, userData, userFile, fs ){
 
     server.post(apiLink+'/addbPairInfo', (request, response) => {
         var pairInfo = request.body;
-        var newUserData = binance.addToPairInfo(pairInfo, userData);
+        var newUserData = binance.addToPairInfo(pairInfo, userData, userAccount);
         try{
             fs.writeFileSync(userFile, JSON.stringify(newUserData),'utf-8');
             response.json("Successfully Added");
@@ -18,11 +18,11 @@ function openServer(server, userData, userFile, fs ){
         // console.log('got request : ' + );
     });
     
-    server.post(apiLink+'/rmbPairInfo', (request, response) => {
+    server.post(apiLink+'/rmbPairInfo', async (request, response) => {
         var id = request.body;
         try{
-            delete userData.binance[userAccount].boughtPairs[id];
-            fs.writeFileSync(userFile, JSON.stringify(userData),'utf-8');
+            await delete userData.binance[userAccount].boughtPairs[id];
+            await fs.writeFileSync(userFile, JSON.stringify(userData),'utf-8');
             response.json("Removed");
         //    console.log(id[0]); 
         }catch(Exception){
@@ -32,8 +32,8 @@ function openServer(server, userData, userFile, fs ){
         // console.log('got request : ' + );
     });
     
-    server.get(apiLink + '/gbp', (req, resp) => {
-        bPrices = binance.getPrices();
+    server.get(apiLink + '/gbp', async (req, resp) => {
+        bPrices = await binance.getPrices(userData.binance[userAccount].pairs);
         if (bPrices != null) {
             resp.json(bPrices);
             // console.log(bPrices.XRPUSDT);
@@ -78,7 +78,7 @@ function openServer(server, userData, userFile, fs ){
         if (info != null) {
             resp.json(Array.from(info));
         }
-
+        // binance.closeWebSockets();
         // var th = await binance.getTradeHist("XRPUSDT");
         // console.log(th);
         // console.log();
@@ -96,11 +96,22 @@ function openServer(server, userData, userFile, fs ){
         resp.json(Array.from(data));
     });
 
+
+
+    console.log("Binance Server Running");
 }
 
 module.exports = {
     startBinanceServer: async function(server, userData, userFile, fs){
         openServer(server, userData, userFile, fs);
         
+    },
+
+    openWebSockets: function(){
+        binance.openWebSockets();
+    },
+
+    closeWebSockets: function(){
+        binance.closeWebSockets();
     }
 }

@@ -15,9 +15,10 @@
     }
 </style>
 
-<div>
+<br>
+<div class="card card-body">
     <div>
-        <br>
+
         <h3>
             <p class="text-center">Open Orders</p>
         </h3>
@@ -40,14 +41,16 @@
                     </th>
                 </tr>
             </thead>
-            <br>
+
             <tbody id="bTradeTable">
             </tbody>
         </table>
     </div>
-
+</div>
+<br>
+<div class="card card-body">
     <div>
-        <br>
+
         <h3>
             <p class="text-center">Wallet</p>
         </h3>
@@ -58,28 +61,34 @@
             <thead class="thead-dark">
                 <tr id="bWalletTableHead">
                     <th>
-                        Pair
+                        Asset
                     </th>
                     <th>
                         Amount
                     </th>
                     <th>
-                        Price
+                        onOrder
                     </th>
                 </tr>
             </thead>
-            <br>
+
             <tbody id="bWalletTable">
             </tbody>
         </table>
     </div>
     <br>
+</div>
+<br>
+<div>
     <button id="bAutoTradeBut" type="button" class="btn btn-success btn-lg btn-block">
         Auto Trade</button>
-
 </div>
+<br>
 
 <script>
+    var autoTradeBut = document.getElementById("bAutoTradeBut");
+    var trade = false;
+
     async function populateOrderTable(orderList) {
         var tableObj = document.getElementById("bTradeTable");
         tableObj.innerHTML = '';
@@ -92,9 +101,9 @@
             else { order.style.backgroundColor = "green" }
             var pair = document.createElement('td');;
             pair.innerHTML = orderList[index]["symbol"];
-            var amount = document.createElement('td');;
+            var amount = document.createElement('td');
             amount.innerHTML = parseFloat(orderList[index]["origQty"]).toFixed(4);
-            var price = document.createElement('td');;
+            var price = document.createElement('td');
             price.innerHTML = parseFloat(orderList[index]["price"]).toFixed(4);
 
             row.appendChild(order);
@@ -105,7 +114,26 @@
         }
     }
 
-    async function getUserOpenOrd(link) {
+    async function populateWalletTable(walletData) {
+        var tableObj = document.getElementById("bWalletTable");
+        tableObj.innerHTML = '';
+        for (var index in walletData) {
+            var row = document.createElement('tr');
+            var asset = document.createElement('td');
+            asset.innerHTML = walletData[index][0];
+            var amount = document.createElement('td');
+            amount.innerHTML = parseFloat(walletData[index][1][0]).toFixed(4);
+            var onOrder = document.createElement('td');
+            onOrder.innerHTML = parseFloat(walletData[index][1][1]).toFixed(4);
+
+            row.appendChild(asset);
+            row.appendChild(amount);
+            row.appendChild(onOrder);
+            tableObj.appendChild(row);
+        }
+    }
+
+    async function getData(link) {
         try {
             // let response = ;
             let listOfOrders = await (await fetch(link)).json();
@@ -117,9 +145,34 @@
     }
 
     async function updateOrdersTable() {
-        var orderList = await getUserOpenOrd('/io/gbOpenOrd');
+        var orderList = await getData('/io/gbOpenOrd');
         populateOrderTable(orderList);
-        var walletmap = await getUserOpenOrd('/io/gbWallet');
+        // var walletmap = await getData('/io/gbWallet');
         // console.log(walletmap);
     }
+
+    updateOrdersTable();
+
+    async function updateWalletTable() {
+        var walletData = await getData('/io/gbWallet');
+        populateWalletTable(walletData);
+        // console.log(walletData);
+
+    }
+    updateWalletTable();
+
+    $("#bAutoTradeBut").click(async () => {
+        updateWalletTable();
+        console.log("tradeButtPressed");
+        if (!trade) {
+            autoTradeBut.innerHTML = "Stop Trading";
+            autoTradeBut.setAttribute("class", "btn btn-danger btn-lg btn-block");
+            trade = true;
+        } else {
+
+            autoTradeBut.innerHTML = "Auto Trade";
+            autoTradeBut.setAttribute("class", "btn btn-success btn-lg btn-block");
+            trade = false;
+        }
+    });
 </script>

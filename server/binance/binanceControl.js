@@ -11,11 +11,6 @@ var pairTradeMap = new Map();
 var openOrders = null;
 var wallet = new Map();
 
-async function requirebPrice(tickers) {
-    bPrices = await tickers;
-    // console.log(bPrices.XRPUSDT)
-}
-
 async function requireAsk_Bid_OfPair(ticker) {
     await askbidMap.set(ticker.symbol, ticker);
     // console.log(askbidMap);
@@ -56,8 +51,9 @@ function updateBinanceDeptPerPair(userData, user) {
     // console.log(binance.getdeptMap());
 }
 
-async function updateBPrices() {
-    await binanceAPI.getBinancePrices(requirebPrice);
+async function updateBPrices(pairs) {
+    bPrices = await binanceAPI.getBinancePrices(pairs);
+    // console.log(bPrices);
 }
 
 async function updateTradeHist(pair) {
@@ -71,25 +67,13 @@ async function updateOpenOrders(orders) {
 async function updateWallet(balance) {
     var tpairs = ["ETH", "BTC"];
     for (var id in balance) {
-        var amount = parseFloat(balance[id]["available"]);
+        var amount = parseFloat(balance[id]["available"]).toFixed(6);
+        var inOrder = parseFloat(balance[id]["onOrder"]).toFixed(6);
         if (amount > 0.0000) {
-            for (var index in tpairs) {
-                try {
-                    wallet.set(id, [amount, parseFloat(bPrices[id + 'USDT']) * amount]);
-
-
-                } catch (Exception1) {
-                    try {
-                        // console.log(id+tpairs[index]+" : "+bPrices[id+tpairs[index]]);
-                        var altPair = parseFloat(bPrices[id+tpairs[index]]);
-                        var alyPairPrice= altPair*amount;
-                    
-                        wallet.set(id, [amount, parseFloat(bPrices[tpairs[index]+'USDT'])*alyPairPrice]);
-                        break;
-                    } catch (Exception2) {
-                        // console.log(Exception2);
-                    }
-                }
+            try {
+                wallet.set(id, [amount, inOrder]);
+            } catch (Exception) {
+                console.log(Exception);
             }
         }
     }
@@ -100,8 +84,16 @@ module.exports = {
         binanceAPI.setUp(key, secret);
     },
 
-    getPrices: function () {
-        updateBPrices();
+    openWebSockets: function () {
+        binanceAPI.openWebConnections();
+    },
+
+    closeWebSockets: function () {
+        binanceAPI.closeConnections();
+    },
+
+    getPrices: async function (pairs) {
+        await updateBPrices(pairs);
         return bPrices;
     },
 
@@ -116,7 +108,8 @@ module.exports = {
     },
 
     getUserPairInfo: async function (userData, user) {
-        await updateBPrices();
+        await updateBPrices(userData.binance[user].pairs);
+
         var pairInfoMap = new Map();
         var bPairs = userData.binance[user].boughtPairs;
         var totalInvested = 0.0;
@@ -124,14 +117,15 @@ module.exports = {
         try {
             for (var id in bPairs) {
                 pairInfoLastID = id;
-                var pairCurPrice = parseFloat(bPrices[bPairs[id][0]]);
+                var pairCurPrice = parseFloat(bPrices.get(bPairs[id][0]));
+
                 var pairAmount = parseFloat(bPairs[id][1]);
                 var pairBPrice = parseFloat(bPairs[id][2]);
                 var pairFee = parseFloat(bPairs[id][3]);
-
+                // console.log(pairCurPrice, pairAmount, pairBPrice, pairFee);
                 // converting all pairs to USDT
                 if (bPairs[id][0].substr(-4) != "USDT") {
-                    pairCurPrice = pairCurPrice * parseFloat(bPrices[bPairs[id][0].substr(-3) + "USDT"]);
+                    pairCurPrice = pairCurPrice * parseFloat(bPrices.get(bPairs[id][0].substr(-3) + "USDT"));
                 }
                 var totalBought = (pairBPrice * pairAmount);
                 var total = (pairCurPrice * pairAmount) - totalBought;
@@ -158,7 +152,7 @@ module.exports = {
         return pairInfoLastID;
     },
 
-    addToPairInfo: function (pairInfo, userData) {
+    addToPairInfo: function (pairInfo, userData, userAccount) {
         try {
             var pair = pairInfo[0];
             var amount = parseFloat(pairInfo[1]);
@@ -166,7 +160,7 @@ module.exports = {
             var fee = parseFloat(pairInfo[3]);
             var id = parseFloat(pairInfoLastID) + 1;
 
-            userData.binance.default.boughtPairs[id] = [pair, amount, price, fee];
+            userData.binance[userAccount].boughtPairs[id] = [pair, amount, price, fee];
             return userData;
         } catch (Exception) {
             // response.json("Failed: Incorrect data");

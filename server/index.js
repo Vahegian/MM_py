@@ -11,3 +11,12 @@ server.use(exp.static('UI'))
 server.use(exp.json({ limit: '1mb' }));
 binance.startBinanceServer(server, userData, userFile, fs);
 
+server.get('/binance', async (req, resp) => {
+    await binance.openWebSockets();
+    resp.json("started")
+});
+
+server.get('/xbinance', async (req, resp) => {
+    await binance.closeWebSockets();
+    resp.json("stopped")
+});
