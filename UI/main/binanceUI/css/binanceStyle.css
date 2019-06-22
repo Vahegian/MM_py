@@ -1,0 +1,42 @@
+.my-custom-scrollbar {
+    position: relative;
+    height: 300px;
+    overflow: auto;
+}
+
+.my-custom-scrollbar thead th {
+    position: sticky;
+    top: 0;
+}
+
+.table-wrapper-scroll-y {
+    display: block;
+}
+
+.slow .toggle-group {
+    transition: left 0.7s;
+    -webkit-transition: left 0.7s;
+}
+
+body{
+    height: 200px;
+    background-color: #F0B90B; /* For browsers that do not support gradients */
+    background-image: linear-gradient(#F0B90B, #ffffff); /* Standard syntax (must be last) */
+    background-attachment: fixed;
+    /* padding-top: 10px; */
+  }
+
+.binanceButton {
+    background-color: #ffffff;
+    border-style: none;
+    
+}
+
+.attention {
+    color: red;
+}
+
+.info {
+    color: #F0B90B;
+}
+

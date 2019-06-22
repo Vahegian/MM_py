@@ -18,6 +18,7 @@
     <!-- Navbar begin -->
     <div id="nav-placeholder">
     </div>
+    <br><br>
     <!-- Navbar end -->
 
     <!-- binance begin -->
@@ -26,6 +27,9 @@
     <!-- binance end -->
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+    
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -40,47 +44,11 @@
 
     <!-- put navbar in placeholder -->
     <script src="//code.jquery.com/jquery.min.js"></script>
-    <script>
-        $.get("navbar.html", function (data) {
-            $("#nav-placeholder").replaceWith(data);
-        });
-    </script>
 
-    <script>
-        async function showBinance() {
-            await fetch("/binance");
+    <script src="/main/js/index.js"></script>
 
-            $.get("binanceUI/binance.html", function (data) {
-                // var body = document.getElementById("body-placeholder");
-                $("#body-placeholder").append(data);
-            });
-        }
-    </script>
-
-    <script>
-        function clearBody() {
-            try {
-                stopBinance();
-                var div = document.getElementById("body-placeholder");
-                div.innerHTML = '';
-                // while (div.firstChild) {
-                //     div.removeChild(div.firstChild);
-                // }
-            } catch (Exception) { }
-        }
-    </script>
-
-    <script>
-        function makeButton(text) {
-            var button = document.createElement("button");
-            button.setAttribute("type", "button");
-            button.setAttribute("class", "btn btn-secondary waves-effect waves-light");
-            button.appendChild(document.createTextNode(text));
-            return button;
-
-        }
-    </script>
-
+    
+    
 </body>
 
 </html>

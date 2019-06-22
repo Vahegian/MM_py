@@ -1,19 +1,14 @@
-<div id="binance">
-    <div id="temp-top"></div>
+<link rel="stylesheet" type="text/css" href="/main/binanceUI/css/binanceStyle.css">
+
+<div id="binance" class="binanceBackGround">
     <div id="temp-pairInfo"></div>
-    <div id="temp-bottom"></div>
+    <br>
+    <div id="temp-openOrder"></div>
+    <br>
+    <div id="temp-wallet"></div>
+    <br>
+    <div id="temp-autoTrade"></div>
+    <br>
 
-    <script>
-        $.get("binanceUI/binanceTop.html", function (data) {
-            $("#temp-top").replaceWith(data);
-        });
-        $.get("binanceUI/binancePairInfo.html", function (data) {
-            $("#temp-pairInfo").replaceWith(data);
-        });
-        $.get("binanceUI/binanceBottom.html", function (data) {
-            $("#temp-bottom").replaceWith(data);
-        });
-
-        
-    </script>
+    <script src="/main/binanceUI/js/main.js"></script>
 </div>
