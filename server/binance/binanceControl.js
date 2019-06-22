@@ -9,7 +9,9 @@ var pairDeptMap = new Map();
 var pairInfoLastID = null;
 var pairTradeMap = new Map();
 var openOrders = null;
-var wallet = new Map();
+var walletBalance = null;
+var hasBalances = false;
+var hasOpenOrders = false;
 
 async function requireAsk_Bid_OfPair(ticker) {
     await askbidMap.set(ticker.symbol, ticker);
@@ -61,23 +63,66 @@ async function updateTradeHist(pair) {
 }
 
 async function updateOpenOrders(orders) {
-    openOrders = orders;
+    openOrders = await orders;
+    hasOpenOrders = true;
+}
+
+async function setBalances(balance){
+    walletBalance = await balance;
+    hasBalances = true;
 }
 
 async function updateWallet(balance) {
-    var tpairs = ["ETH", "BTC"];
+    var wallet = new Map();
+    var tpairs = ["USDT", "ETH", "BTC", "BNB"];
+    var totalPrice = 0.0;
     for (var id in balance) {
-        var amount = parseFloat(balance[id]["available"]).toFixed(6);
-        var inOrder = parseFloat(balance[id]["onOrder"]).toFixed(6);
-        if (amount > 0.0000) {
+        var coin = balance[id];
+        var amount = parseFloat(coin["available"]);
+        var inOrder = parseFloat(coin["onOrder"]);
+        if (amount > 0.00000 || inOrder > 0.00000) {
+            var price = 0.0;
+            var totalAmount = parseFloat(amount + inOrder);
+            var pairPrice = 0.0;
             try {
-                wallet.set(id, [amount, inOrder]);
+                for (var pairNum in tpairs) {
+                    var pair = tpairs[pairNum];
+                    try {
+                        var coinPair = id + pair;
+                        if (id == "USDT") {
+                            price = parseFloat(totalAmount);
+                            break;
+                        }
+                        if (pair == "USDT") {
+                            pairPrice = bPrices.get(coinPair);
+                            if (pairPrice > 0.0) {
+                                break;
+                            }
+                        } else {
+                            pairPrice = bPrices.get(coinPair) * bPrices.get(pair + "USDT");
+                            if (pairPrice > 0.0) {break;}
+                        }
+                    } catch (Exp) {}
+                }
             } catch (Exception) {
+                pairPrice = 0.0;
                 console.log(Exception);
             }
+            price = parseFloat(totalAmount) * parseFloat(pairPrice);
+            //                     // console.log(coinPair, pairPrice, price);
+            
+            if (isNaN(price)) {
+                totalPrice += 0.0;
+                wallet.set(id, [amount.toFixed(5), inOrder.toFixed(5), 0.0]);
+            } else {
+                wallet.set(id, [amount.toFixed(5), inOrder.toFixed(5), price.toFixed(5)]);
+                totalPrice += price;
+            }
+            wallet.set("total", totalPrice);
         }
     }
-    // wallet=balance;
+    return wallet;
+    // console.log(wallet);
 }
 module.exports = {
     setUpAPI: function (key, secret) {
@@ -135,7 +180,7 @@ module.exports = {
                 totalInvested += totalBought;
                 totalProfit += totalAfterFee;
 
-                pairInfoMap.set(Array.from(bPairs[id]), totalAfterFee);
+                pairInfoMap.set(id, [Array.from(bPairs[id]), totalAfterFee]);
 
             }
             pairInfoMap.set("totalInvested", totalInvested);
@@ -174,14 +219,20 @@ module.exports = {
     },
 
     getOpenOrders: async function () {
-        await binanceAPI.getAllOpenOrders(updateOpenOrders);
+        if(!hasOpenOrders){
+            await binanceAPI.getAllOpenOrders(updateOpenOrders);
+        }
         return await openOrders;
         // await updateOpenOrders();
     },
 
     getWallet: async function () {
-        await binanceAPI.getWalletInfo(updateWallet);
-        return wallet;
+        if(!hasBalances){
+            await binanceAPI.getWalletInfo(setBalances);
+            console.log("got wallet balances");
+        }
+        
+        return await updateWallet(walletBalance);
     }
 
 

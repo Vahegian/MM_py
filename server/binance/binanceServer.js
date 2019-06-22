@@ -24,7 +24,7 @@ function openServer(server, userData, userFile, fs ){
             await delete userData.binance[userAccount].boughtPairs[id];
             await fs.writeFileSync(userFile, JSON.stringify(userData),'utf-8');
             response.json("Removed");
-        //    console.log(id[0]); 
+        //    console.log(id); 
         }catch(Exception){
             response.json("Failed: not removed");
             console.log("failed : "+ Exception);

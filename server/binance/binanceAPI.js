@@ -35,7 +35,7 @@ async function getLastPrices(pairs) {
             webSocket.chart(pair, "1m", async (symbol, interval, chart) => {
                 let tick = await binance.last(chart);
                 const last = await chart[tick].close;
-                await latsPrices.set(symbol, last);
+                await latsPrices.set(symbol, parseFloat(last));
             });
         });
 
