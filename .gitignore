@@ -105,3 +105,8 @@ venv.bak/
 
 .idea/*
 .vscode
+private
+*.sh
+*.txt
+dataCollector.py
+raw
