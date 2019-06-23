@@ -143,6 +143,7 @@ async function populatePairTable() {
     // console.log(data);
     var tableObj = document.getElementById("bPairsTable");
     tableObj.innerHTML = '';
+    
     for (var id in data) {
         if (data[id][0] != "totalInvested" && data[id][0] != "totalProfit") {
             var row = makePairInfoRow(data[id][0], data[id][1][0], data[id][1][1], showAll);
