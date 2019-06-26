@@ -135,6 +135,8 @@ module.exports = {
 
     closeWebSockets: function () {
         binanceAPI.closeConnections();
+        hasBalances = false;
+        hasOpenOrders = false;
     },
 
     getPrices: async function (pairs) {

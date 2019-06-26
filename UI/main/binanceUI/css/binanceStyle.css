@@ -21,7 +21,7 @@
 body{
     height: 200px;
     background-color: #F0B90B; /* For browsers that do not support gradients */
-    background-image: linear-gradient(#F0B90B, #ffffff); /* Standard syntax (must be last) */
+    /*background-image: linear-gradient(#F0B90B, #ffffff); /* Standard syntax (must be last) */
     background-attachment: fixed;
     /* padding-top: 10px; */
   }
