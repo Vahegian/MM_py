@@ -46,6 +46,7 @@ lowHighRanges = [31, 62, 93, 124] #months
 
 rangeValueMap = {}
 
+  
 
 # will populate rangeValueMap with differences between max and min per month 
 # range, find best range by finding range with consistent high/big max min gaps 
@@ -67,7 +68,8 @@ with open("python/logs/FGTRout.txt", 'w') as logFile:
     print("LOW to HIGH Changes: " , fileName)
     logFile.write("LOW to HIGH Changes: " + fileName)
     for timeRange in list(rangeValueMap.keys()):
-        output = "\ndays:"+str(timeRange)+ " max:"+ str(max(rangeValueMap[timeRange]))+\
+        output = "\ndays:"+str(timeRange)+ " >> price change over Time >> max:"+ str(max(rangeValueMap[timeRange]))+\
+        " min:"+ str(min(rangeValueMap[timeRange]))+\
         " mean:"+ str((sum(rangeValueMap[timeRange])/len(rangeValueMap[timeRange])))
         print(output)
         logFile.write(output)
@@ -76,6 +78,10 @@ with open("python/logs/FGTRout.txt", 'w') as logFile:
 
 
 allData = getClosedData(coin_data, lastDate, 0)
+
+# with open("server/Trader/filesForTesting/xrpTest.json", 'w') as testFile:
+#     testFile.write("{ \n \"0\":"+str(list(coin_data['Close'].values()))+"\n }")
+  
 
 plt.plot(allData)
 plt.ylabel('$ Price')
