@@ -1,14 +1,8 @@
 
 class TradeENV:
     def __init__(self):
-        self.min_allowed_trade_amount = 10
-        self.__wallet_available = 100
-        self.__wallet_before_buy = 0.0
-        self.target = 10000
-        self.fee = 0.1
-        self.__coin_qyt = 0
+        self.resetENV()
         self.__coinData = None
-        self.__coin_Data_Cur_Id = 4
         self.__ACTION_REWARD = 10
         self.__PROFIT_REWARD = 100
         self.__LOSS_PENALTY = -100
@@ -16,7 +10,10 @@ class TradeENV:
         self.__PENALTY = -50
         self.__NO_REWARD = 0
         self.__dataLength = 0
-        self.__curBuyPrice = 0.0
+        self.target = 1000
+        self.fee = 0.1
+        self.min_allowed_trade_amount = 10
+
         
     def set_data(self, data):
         # print(data)
@@ -29,6 +26,7 @@ class TradeENV:
         reward = 0
         # tempWallet = self.__wallet_available
         done = False
+        target_reached = False
         
         if step == 0:
             bought = self.__buy(self.__coin_Data_Cur_Id)
@@ -51,16 +49,19 @@ class TradeENV:
             else:
                 reward = self.__ACTION_REWARD
                 
-        if self.__wallet_available >= self.target:
+        if self.__wallet_available >= self.target or self.__coin_Data_Cur_Id>= len(self.__coinData)-1:
             done = True
         else:
             done = False
+        
+        if self.__wallet_available >= self.target:
+            target_reached = True
         
         self.__coin_Data_Cur_Id+=1
         
         newState = self.__getNewState(self.__coin_Data_Cur_Id)
         
-        return (newState ,reward, done)
+        return (newState ,reward, done, target_reached)
         
     def __sell(self, priceId):
         price = self.__coinData[priceId][1]
@@ -98,7 +99,7 @@ class TradeENV:
         elif buyPrice == best_price_after:
             return self.__ACTION_REWARD+self.__REWARD
         else:
-            return self.__PENALTY+self.__LOSS_PENALTY
+            return self.__LOSS_PENALTY
         
     def __getNewState(self, priceId):
         dataSlice = self.__coinData[priceId-5:priceId-1]
@@ -111,8 +112,8 @@ class TradeENV:
         # print(x_pos, min_of_range, max_of_range, 0.0, self.dataLength)
         # print(y_pos, min_of_range, max_of_range, 0, self.dataLength)
 
-        x_pos = self.__map_values(x_pos, min_of_range, max_of_range, 0.0, self.__dataLength)
-        y_pos = self.__map_values(y_pos, min_of_range, max_of_range, 0.0, self.__dataLength)
+        x_pos = self.__map_values(x_pos, min_of_range, max_of_range, 0.0, self.__dataLength-1)
+        y_pos = self.__map_values(y_pos, min_of_range, max_of_range, 0.0, self.__dataLength-1)
         return (int(x_pos+0.5), int(y_pos+0.5))
         
     def __map_values(self, x, in_min, in_max, out_min, out_max): 
@@ -123,35 +124,38 @@ class TradeENV:
         
     def get_Env_dimantions(self):
         return (self.__dataLength, self.__dataLength)
-  
+    def reset_id(self):
+        self.__coin_Data_Cur_Id = 4
+    
+    def resetENV(self):
+        self.__wallet_available = 100
+        self.__wallet_before_buy = 0.0
+        self.__coin_qyt = 0
+        self.__coin_Data_Cur_Id = 4
+        self.__curBuyPrice = 0.0
+    
+if __name__ == "__main__":
+    
+    from dataProcessor import DataProcessor
+    import random
+
+    dp = DataProcessor()
+    data_batches = dp.get_batched_data("private/cryptoMinute/XRPUSDT.csv") # add data clean method to class
+    # print(data_batches, len(data_batches))
         
-# reading a csv file of coinData into list of list
+    # using the env.
+    te = TradeENV()      
+    # te.set_data(data_batches[10])
 
-# import csv
-
-# coinData = []
-# with open("private/cryptoMinute/XRPUSDT.csv", "r") as dataFile:
-#     content = csv.reader(dataFile, delimiter=',')
-#     first = True
-#     for row in content:
-#         if first:
-#             first = False
-#             continue
-#         floatRow = []
-#         for i in row:
-#             floatRow.append(float(i))
-#         coinData.append(floatRow)
+    for data in data_batches:
+        te.set_data(data)
+        te.reset_id()
+        for rounds in range(len(data)-4):
+            step = te.make_step(random.randint(0,2))    
+            te.showEnvState()
         
-# data_batches = []
-# qty = int(len(coinData)/60+0.5)
-
-# for num in range(qty):
-#     data_batches.append(coinData[num:num+60])
-# # print(data_batches, len(data_batches))
-      
-# # using the env.
-# te = TradeENV()      
-# te.set_data(data_batches[10])
+        
+    
 # step = te.make_step(0)
 # print(step)
 # te.showEnvState()
