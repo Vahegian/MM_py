@@ -111,3 +111,4 @@ private
 dataCollector.py
 raw
 train_data
+*.csv
