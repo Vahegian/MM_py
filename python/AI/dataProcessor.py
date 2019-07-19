@@ -65,5 +65,5 @@ class DataProcessor:
 
 if __name__ == "__main__":
     dp = DataProcessor()
-    flink = "private/cryptoMinute/ETHUSDT.csv"
+    flink = "private/cryptoMinute/BATUSDT.csv"
     cdata = dp.clean_fix_content(flink, keep_first_line=False, write_to_file=True)   
