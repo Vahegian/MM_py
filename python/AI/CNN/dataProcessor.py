@@ -3,9 +3,10 @@ import csv
 # reading a csv file of coinData into list of list
 class DataProcessor:
     def __init__(self):
-        self.__coinData = []
+        pass
         
     def get_file_content(self, link_to_file):
+        coinData = []
         with open(link_to_file, "r") as dataFile:
             content = csv.reader(dataFile, delimiter=',')
             first = True
@@ -16,8 +17,8 @@ class DataProcessor:
                 floatRow = []
                 for i in row:
                     floatRow.append(float(i))
-                self.__coinData.append(floatRow)
-        return self.__coinData
+                coinData.append(floatRow)
+        return coinData
                 
     def get_batched_data(self, link_to_file, qty=60):
         coinData = self.get_file_content(link_to_file)        
@@ -63,7 +64,7 @@ class DataProcessor:
         
                 
 
-if __name__ == "__main__":
-    dp = DataProcessor()
-    flink = "private/cryptoMinute/XRPUSDT.csv"
-    cdata = dp.clean_fix_content(flink, keep_first_line=False, write_to_file=True)   
+# if __name__ == "__main__":
+    # dp = DataProcessor()
+    # flink = "private/cryptoMinute/XRPUSDT.csv"
+    # cdata = dp.clean_fix_content(flink, keep_first_line=False, write_to_file=True)   

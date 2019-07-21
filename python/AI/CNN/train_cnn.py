@@ -1,31 +1,42 @@
 import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
+from keras.callbacks import TensorBoard, ModelCheckpoint
+from dataProvider import DataProvider
 
-folder = "train_data/"
-dataFolders = ["60_max/","60_min/","180_max/","180_min/","360_max/","360_min/"]
-coinFolders = ["BAT/","BTC/","EOS/","ETH/","XRP/"]
-img_label_folder = "60x60/"
-img_label_file = "img_label.npy"
-
-def get_traning_data():
-    img_label_data = []
-    for dataFolder in dataFolders:
-        for coinFolder in coinFolders:
-            img_label_data.append(list(np.load(folder+dataFolder+coinFolder+img_label_folder+img_label_file, allow_pickle=True)))
-    train_data = []
+def make_CNN():
+    #create model
+    model = Sequential()
+    #add model layers
+    model.add(Conv2D(32, kernel_size=(5,5), activation='relu', input_shape=(60,60,1), padding='same'))
+    model.add(MaxPooling2D())
+    model.add(Conv2D(64, kernel_size=(5,5), activation='relu', padding='same')) 
+    model.add(MaxPooling2D())
+    model.add(Flatten())
+    model.add(Dense(1024, activation='relu'))
+    model.add(Dense(21, activation='softmax'))
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    print(model.summary())
     
-    for data in img_label_data:
-        # print(data.shape)
-        train_data = train_data+data
-            
-    print(len(train_data))
-    data_70_percent = round(((len(train_data)*70)/100)+0.5)
-    training = train_data[:data_70_percent]
-    testing = train_data[data_70_percent:]
-    return training, testing
+    return model
     
 
 if __name__ == "__main__":
-    training, testing = get_traning_data()
-    print(len(training), len(testing))
+    dp = DataProvider()
+    
+    # *** if data is not processed use this ***
+    train_x, train_y, test_x, test_y = dp.get_dataSets()
+    
+    # *** if data is processed and u trying to retrain use this ***
+    # train_x, train_y, test_x, test_y = dp.get_data()
+    
+    model = make_CNN()
+    
+    tensorboard = TensorBoard(log_dir='./logs', histogram_freq=0,
+                          write_graph=True, write_images=False)
+    checkpoint = ModelCheckpoint("./models/run1.hdf5", monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+    
+    history = model.fit(train_x,train_y,epochs=5,verbose=1,validation_data=(test_x,test_y), callbacks=[tensorboard, checkpoint])
+    
     
     
