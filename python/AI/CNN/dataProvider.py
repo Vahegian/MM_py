@@ -4,6 +4,7 @@ import csv
 from chartMaker import ChartMaker
 from imgROI import DataOptimizer
 import numpy as np
+from dataGenCV import DataGenCV
 
 
 class DataProvider:
@@ -17,6 +18,7 @@ class DataProvider:
         self.__folder = "train_data"
         self.__img_label_folder = "60x60"
         self.__img_label_file = "img_label001.npy"
+        self.dgcv = DataGenCV(self.dp)
         
     def cleanData(self, link_to_data_folder):
         files = os.listdir(link_to_data_folder)
@@ -99,6 +101,11 @@ class DataProvider:
         self.make_charts_and_future_prices()
         self.optimize_data_for_cnn()
         return self.get_dataSets()
+    
+    def clean_data_cv_only(self):
+        self.cleanData(self.__collected_data_folder)
+        return self.dgcv.produce_train_data()
+        
 
 # if __name__ == "__main__":
 #     dp = DataProvider()

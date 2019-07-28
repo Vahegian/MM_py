@@ -5,14 +5,14 @@ class DataProcessor:
     def __init__(self):
         pass
         
-    def get_file_content(self, link_to_file):
+    def get_file_content(self, link_to_file, getFirst=False):
         coinData = []
         with open(link_to_file, "r") as dataFile:
             content = csv.reader(dataFile, delimiter=',')
-            first = True
+            first = getFirst
             for row in content:
-                if first:
-                    first = False
+                if not first:
+                    first = True
                     continue
                 floatRow = []
                 for i in row:
