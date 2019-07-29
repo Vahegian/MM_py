@@ -6,9 +6,9 @@ from dataProvider import DataProvider
 from dataGenCV import DataGenCV
 
 class MMCNN:
-   def __init__(self, DataProvider, ):
-      self.dp = DataProvider
-      self.dgcv = DataGenCV(dp)
+   def __init__(self, dp, dgcv):
+      self.dp = dp
+      self.dgcv = dgcv
 
    def make_CNN(self):
       #create model
@@ -24,7 +24,9 @@ class MMCNN:
       
       return model
    
-   def compile_Model(self, model):
+   def compile_Model(self, model, weights=None):
+      if weights !=None:
+         model.load_weights(weights)
       model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
       print(model.summary())
    
@@ -59,10 +61,14 @@ class MMCNN:
 
 if __name__ == "__main__":
    dp = DataProvider()
-   mmcnn = MMCNN(dp)
-   model = mmcnn.make_CNN()
+   dgcv = DataGenCV(dp)
+   mmcnn = MMCNN(dp, dgcv)
+    
    train_x, train_y, test_x, test_y = mmcnn.get_training_data()
    # train_x, train_y, test_x, test_y = mmcnn.get_training_data_from_file()
+   
+   model = mmcnn.make_CNN()
+   
    model = mmcnn.compile_Model(model)
    hist = mmcnn.train_model(model,train_x, train_y, test_x, test_y) 
     

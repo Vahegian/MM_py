@@ -72,6 +72,26 @@ class DataGenCV:
         img = cv2.resize(img, (60, 60))
         return img
             
+    def get_img(self, lp, pc, high, low, bp, ap):
+        fig = plt.figure()    
+        plt.plot(lp)#(lats price)
+        plt.plot(pc)#(close_price)
+        plt.plot(high)#(high)
+        plt.plot(low)#(low)
+        plt.plot(bp)#(bid price)
+        plt.plot(ap)#(ask price)
+        # plt.plot([(float(a)-float(b)) for a, b in zip(bp, bq)])#(low_data)
+        # plt.plot([(float(a)-float(b)) for a, b in zip(ap, aq)])
+        plt.axis('off')
+        
+        fig.canvas.draw()
+        convas = fig.canvas.renderer.buffer_rgba()
+        img = self.get_transformed_img(convas)
+        plt.clf()
+        plt.close(fig)
+        return img
+        
+    
     def get_charts(self, sets):
         charts_labels = []
         for subset in sets:
@@ -79,9 +99,9 @@ class DataGenCV:
             pc = [] 
             high =[] 
             low =[] 
-            bq =[] 
+            # bq =[] 
             bp =[] 
-            aq =[]
+            # aq =[]
             ap = []
             for row in subset[0]:
                 # print(row)
@@ -89,30 +109,41 @@ class DataGenCV:
                 pc.append(row[2])
                 high.append(row[3])
                 low.append(row[4])
-                bq.append(row[5])
+                # bq.append(row[5])
                 bp.append(row[6])
-                aq.append(row[7])
+                # aq.append(row[7])
                 ap.append(row[8])
                 
-            fig = plt.figure()    
-            plt.plot(lp)#(lats price)
-            plt.plot(pc)#(close_price)
-            plt.plot(high)#(high)
-            plt.plot(low)#(low)
-            plt.plot(bp)#(bid price)
-            plt.plot(ap)#(ask price)
-            # plt.plot([(float(a)-float(b)) for a, b in zip(bp, bq)])#(low_data)
-            # plt.plot([(float(a)-float(b)) for a, b in zip(ap, aq)])
-            plt.axis('off')
+            # fig = plt.figure()    
+            # plt.plot(lp)#(lats price)
+            # plt.plot(pc)#(close_price)
+            # plt.plot(high)#(high)
+            # plt.plot(low)#(low)
+            # plt.plot(bp)#(bid price)
+            # plt.plot(ap)#(ask price)
+            # # plt.plot([(float(a)-float(b)) for a, b in zip(bp, bq)])#(low_data)
+            # # plt.plot([(float(a)-float(b)) for a, b in zip(ap, aq)])
+            # plt.axis('off')
             
-            fig.canvas.draw()
-            convas = fig.canvas.renderer.buffer_rgba()
-            img = self.get_transformed_img(convas)
+            # fig.canvas.draw()
+            # convas = fig.canvas.renderer.buffer_rgba()
+            # img = self.get_transformed_img(convas)
+            img = self.get_img( lp, pc, high, low, bp, ap)
             charts_labels.append([img, subset[1]])
-            plt.clf()
-            plt.close(fig)
+            # plt.clf()
+            # plt.close(fig)
         return charts_labels
+    
+    def prepare_img_for_cnn(self, img_list, reshapeFour=True):
+        if reshapeFour:
+            img_list = img_list.reshape(len(img_list), 60, 60, 1)
+        else:
+            img_list = img_list.reshape(1, 60, 60, 1)
         
+        img_list = img_list.astype('float32')
+        img_list /=255.0
+        return img_list
+    
     def convertData_for_cnn(self, data):
         x = []
         y = []
@@ -126,9 +157,10 @@ class DataGenCV:
         # print(len(x), len(y))
     
         x = np.array(x)
-        x = x.reshape(len(x), 60, 60, 1)
-        x = x.astype('float32')
-        x /=255.0
+        # x = x.reshape(len(x), 60, 60, 1)
+        # x = x.astype('float32')
+        # x /=255.0
+        x = self.prepare_img_for_cnn(x)
         
         y = np.array(y)
         
