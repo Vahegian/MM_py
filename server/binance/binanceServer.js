@@ -96,6 +96,12 @@ function openServer(server, userData, userFile, fs ){
         resp.json(Array.from(data));
     });
 
+    server.post(apiLink+'/prediction', async (request, response) => {
+        var pairInfo = await request.body;
+        console.log(pairInfo);
+        response.json("Prediction received")
+    });
+
 
 
     console.log("Binance Server Running");

@@ -8,8 +8,9 @@ class DataGenCV:
     def __init__(self, dataProcessor):
         self.dp = dataProcessor
         self.folder_for_clean_data = "clean"
-        self.doMin = True
+        self.doMin = False
         self.outFile = "charts_labels.npy"
+        self.action_percent = 0.01  # %1
     
     def get_percent_diff(self,curNum, nextNum):
         curNum = float(curNum)
@@ -35,6 +36,23 @@ class DataGenCV:
         elif percent_change < -0.25:
             percents[0] = 1
             return percents
+        
+    def get_perCents_3_options(self, percent_change):
+        percents = [0]*3
+        if percent_change>=self.action_percent:
+            id = 2
+            percents[id] = 1
+            return percents
+        elif percent_change<=-1*self.action_percent: 
+            id = 0 
+            percents[id] = 1
+            return percents
+        elif percent_change>-1*self.action_percent and percent_change<self.action_percent: # between -0.01 and 0.01
+            percents[1] = 1
+            return percents 
+        
+    def get_list_average(self, list):
+        return sum(list)/float(len(list))
     
     def get_data_sets(self, data, doMIN = False):
         limit = 60
@@ -48,14 +66,14 @@ class DataGenCV:
                     temp_list = []
                     for sec_row in range(row, row+limit):
                         temp_list.append(data[sec_row][1])
-                    percent_diff = self.get_percent_diff(subset[-1][1], max(temp_list))
-                    percent_diff_list = self.get_perCents(percent_diff)
+                    percent_diff = self.get_percent_diff(subset[-1][1], self.get_list_average(temp_list))
+                    percent_diff_list = self.get_perCents_3_options(percent_diff)
                     # print(percent_diff_list)
                     sets.append([subset, percent_diff_list])
                    
                     if doMIN:
                         percent_diff = self.get_percent_diff(subset[-1][1], min(temp_list))
-                        percent_diff_list = self.get_perCents(percent_diff)
+                        percent_diff_list = self.get_perCents_3_options(percent_diff)
                         # print(percent_diff_list)
                         sets.append([subset, percent_diff_list])
                     
@@ -114,24 +132,8 @@ class DataGenCV:
                 # aq.append(row[7])
                 ap.append(row[8])
                 
-            # fig = plt.figure()    
-            # plt.plot(lp)#(lats price)
-            # plt.plot(pc)#(close_price)
-            # plt.plot(high)#(high)
-            # plt.plot(low)#(low)
-            # plt.plot(bp)#(bid price)
-            # plt.plot(ap)#(ask price)
-            # # plt.plot([(float(a)-float(b)) for a, b in zip(bp, bq)])#(low_data)
-            # # plt.plot([(float(a)-float(b)) for a, b in zip(ap, aq)])
-            # plt.axis('off')
-            
-            # fig.canvas.draw()
-            # convas = fig.canvas.renderer.buffer_rgba()
-            # img = self.get_transformed_img(convas)
             img = self.get_img( lp, pc, high, low, bp, ap)
             charts_labels.append([img, subset[1]])
-            # plt.clf()
-            # plt.close(fig)
         return charts_labels
     
     def prepare_img_for_cnn(self, img_list, reshapeFour=True):
@@ -157,9 +159,6 @@ class DataGenCV:
         # print(len(x), len(y))
     
         x = np.array(x)
-        # x = x.reshape(len(x), 60, 60, 1)
-        # x = x.astype('float32')
-        # x /=255.0
         x = self.prepare_img_for_cnn(x)
         
         y = np.array(y)
@@ -193,15 +192,28 @@ class DataGenCV:
         
         
             
+def make_cnn_data(dp, dgcv):
+    train_x, train_y, test_x, test_y = dgcv.produce_train_data()
+    
+    # train_x, train_y, test_x, test_y = dgcv.convertData_for_cnn(data)
+    print(len(train_x), len(train_y), len(test_x), len(test_y)) 
+    
+def show_collected_data(dgcv):
+    data = list(np.load(dgcv.outFile, allow_pickle=True))
+    for item in data:
+        cv2.imshow("win", item[0])
+        print(item[1])  
+        cv2.waitKey(10)
+
             
 if __name__ == "__main__":
     from dataProcessor import DataProcessor
     dp = DataProcessor()
     dgcv = DataGenCV(dp)
-    train_x, train_y, test_x, test_y = dgcv.produce_train_data()
-    # data = list(np.load(dgcv.outFile, allow_pickle=True))
-    # train_x, train_y, test_x, test_y = dgcv.convertData_for_cnn(data)
-    print(len(train_x), len(train_y), len(test_x), len(test_y))        
+    
+    # make_cnn_data(dp, dgcv)
+    show_collected_data(dgcv)     
+    
             
                 
     
