@@ -1,5 +1,5 @@
 from coinmarketcap import Market
-from dataCollector import CCMCollector
+from .dataCollector import CCMCollector
 
 class CMCFetcher:
     def __init__(self):
@@ -15,10 +15,11 @@ class CMCFetcher:
             
         return tickers
     
-    def fetch_history(self, ticker):
-        sample_link = f"https://coinmarketcap.com/currencies/{ticker}/historical-data/?start=20140101&end=20190816"
+    def fetch_history(self, ticker, start=20140101,end=20190816):
+        sample_link = f"https://coinmarketcap.com/currencies/{ticker}/historical-data/?start={start}&end={end}"
         hist_dataFrame = self.ccmc.get_market_data(sample_link)
         return hist_dataFrame
+    
     
     
 if __name__ == "__main__":
