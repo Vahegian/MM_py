@@ -17,7 +17,7 @@ async function populateWalletTable(walletData) {
             var onOrder = document.createElement('td');
             onOrder.innerHTML = parseFloat(walletData[index][1][1]).toFixed(4);
             var price = document.createElement('td');
-            price.innerHTML = parseFloat(walletData[index][1][2]).toFixed(4);
+            price.innerHTML = "$"+parseFloat(walletData[index][1][2]).toFixed(4);
 
             row.appendChild(asset);
             row.appendChild(amount);

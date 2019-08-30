@@ -13,7 +13,7 @@ async function populateOrderTable(orderList) {
         var amount = document.createElement('td');
         amount.innerHTML = parseFloat(orderList[index]["origQty"]).toFixed(4);
         var price = document.createElement('td');
-        price.innerHTML = parseFloat(orderList[index]["price"]).toFixed(4);
+        price.innerHTML = "$"+parseFloat(orderList[index]["price"]).toFixed(4);
 
         row.appendChild(order);
         row.appendChild(pair);
