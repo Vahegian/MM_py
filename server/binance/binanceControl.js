@@ -1,4 +1,5 @@
 const binanceAPI = require('./binanceAPI');
+const exec = require('child_process').exec;
 
 /*
         Binance functons
@@ -12,6 +13,7 @@ var openOrders = null;
 var walletBalance = null;
 var hasBalances = false;
 var hasOpenOrders = false;
+var cnnPred = {};
 
 async function requireAsk_Bid_OfPair(ticker) {
     await askbidMap.set(ticker.symbol, ticker);
@@ -124,6 +126,29 @@ async function updateWallet(balance) {
     return wallet;
     // console.log(wallet);
 }
+
+async function get_cnn_preds(){
+    exec('sh server/binance/exe/run_py.sh')
+}
+
+async function getPreds(resp){
+    resp.json(cnnPred);
+    trade();
+    // console.log(cnnPred);
+}
+
+async function trade(){
+    // await binanceAPI.getAllOpenOrders(updateOpenOrders);
+    if (openOrders!=null){
+        // console.log(openOrders);
+    }
+    // await binanceAPI.getWalletInfo(setBalances);
+    if (walletBalance!=null){
+        // console.log(walletBalance);
+    }
+    // console.log(cnnPred);
+}
+
 module.exports = {
     setUpAPI: function (key, secret) {
         binanceAPI.setUp(key, secret);
@@ -139,9 +164,11 @@ module.exports = {
         hasOpenOrders = false;
     },
 
-    getPrices: async function (pairs) {
-        await updateBPrices(pairs);
-        return bPrices;
+    getPrices: async function (pairs, resp) {
+        // await updateBPrices(pairs);
+        // return bPrices;
+        resp.json(Array.from(bPrices));
+        // console.log(bPrices);
     },
 
     getaskbidMap: async function (userData, user) {
@@ -165,6 +192,7 @@ module.exports = {
             for (var id in bPairs) {
                 pairInfoLastID = id;
                 var pairCurPrice = parseFloat(bPrices.get(bPairs[id][0]));
+                // console.log(bPrices);
 
                 var pairAmount = parseFloat(bPairs[id][1]);
                 var pairBPrice = parseFloat(bPairs[id][2]);
@@ -235,7 +263,14 @@ module.exports = {
         }
         
         return await updateWallet(walletBalance);
-    }
+    },
 
+    updateCNNPreds: function(preds){
+        cnnPred[preds.pair]=preds;
+        console.log(cnnPred);
+    },
 
+    get_cnn_preds,
+
+    getPreds
 }

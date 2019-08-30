@@ -1,6 +1,6 @@
 const binance = require('./binanceControl');
 const apiLink = '/io';
-var userAccount = "Vahegian";
+var userAccount = "Vahe";
 
 
 function openServer(server, userData, userFile, fs ){
@@ -33,11 +33,11 @@ function openServer(server, userData, userFile, fs ){
     });
     
     server.get(apiLink + '/gbp', async (req, resp) => {
-        bPrices = await binance.getPrices(userData.binance[userAccount].pairs);
-        if (bPrices != null) {
-            resp.json(bPrices);
-            // console.log(bPrices.XRPUSDT);
-        }
+        await binance.getPrices(userData.binance[userAccount].pairs, resp);
+        // if (bPrices != null) {
+        //     resp.json(bPrices);
+        //     // console.log(bPrices.XRPUSDT);
+        // }
     
     });
     
@@ -98,12 +98,32 @@ function openServer(server, userData, userFile, fs ){
 
     server.post(apiLink+'/prediction', async (request, response) => {
         var pairInfo = await request.body;
-        console.log(pairInfo);
+        // console.log(pairInfo);
+        binance.updateCNNPreds(pairInfo);
         response.json("Prediction received")
     });
 
+    server.get(apiLink + '/gbTrade', async (req, resp) => {
+        // var data = await binance.getWallet();
+        await binance.get_cnn_preds();
+        // binance.response_and_trade(resp)
+        console.log("Trading"); 
+        resp.json("Trading");
+    });
 
+    server.get(apiLink + '/gbxTrade', async (req, resp) => {
+        // var data = await binance.getWallet();
+        console.log("Stopped Trading");
+        resp.json("Stopped");
+    });
 
+    server.get(apiLink + '/gbAIPred', async (req, resp) => {
+        // var data = await binance.getWallet();
+        binance.getPreds(resp);
+        // console.log("Stopped Trading");
+        // resp.json("Stopped");
+    });
+    
     console.log("Binance Server Running");
 }
 
