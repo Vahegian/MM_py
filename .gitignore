@@ -116,3 +116,4 @@ logs
 models
 *.npy
 *.hdf5
+*.json
