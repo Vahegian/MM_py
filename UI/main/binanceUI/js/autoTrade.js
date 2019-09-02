@@ -15,11 +15,11 @@ async function updateTraderTable(data, prices){
         var pred = document.createElement('td');
         text = parseFloat(data[index]["pred"]);
         if (text==0){text="DOWN"; pred.style.color="red";}
-        else if (text==1){text="STABILE"; pred.style.color="black";}
+        else if (text==1){text="STABLE"; pred.style.color="black";}
         else if (text==2){text="UP";pred.style.color="green";}
         pred.innerHTML = text;
         var acc = document.createElement('td');
-        acc.innerHTML = parseFloat(data[index]["acc"]).toFixed(4)+"%";
+        acc.innerHTML = (parseFloat(data[index]["acc"])*100).toFixed(4)+"%";
         var price = document.createElement('td');
         price.innerHTML = "$"+parseFloat(data[index]["lastPrice"]).toFixed(4);
 

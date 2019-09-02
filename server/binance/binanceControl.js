@@ -137,6 +137,7 @@ async function getPreds(resp){
     // console.log(cnnPred);
 }
 
+// Implement the trading strategy here
 async function trade(){
     // await binanceAPI.getAllOpenOrders(updateOpenOrders);
     if (openOrders!=null){
@@ -145,6 +146,9 @@ async function trade(){
     // await binanceAPI.getWalletInfo(setBalances);
     if (walletBalance!=null){
         // console.log(walletBalance);
+    }
+    if (cnnPred!=null){
+        // console.log(cnnPred);
     }
     // console.log(cnnPred);
 }
